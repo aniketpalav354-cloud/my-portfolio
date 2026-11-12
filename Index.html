@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aniket | Video Editor & Visual Storyteller</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { background-color: #0a0a0a; color: #f5f5f5; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); }
+    </style>
+</head>
+<body class="antialiased selection:bg-purple-500 selection:text-white">
+
+    <!-- Hero Section -->
+    <header class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
+        <span class="px-3 py-1 text-xs font-medium tracking-wider text-purple-400 uppercase bg-purple-500/10 rounded-full border border-purple-500/20">
+            Available for Freelance & Retainers
+        </span>
+        <h1 class="mt-6 text-4xl md:text-6xl font-extrabold tracking-tight">
+            Aniket
+        </h1>
+        <p class="mt-4 text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
+            Video Editor specializing in <span class="text-white font-semibold">High-Retention Reels/Shorts</span> & <span class="text-white font-semibold">YouTube Storytelling</span>.
+        </p>
+        <div class="mt-6 flex flex-wrap justify-center gap-3 text-sm text-gray-300">
+            <span class="glass px-4 py-1.5 rounded-lg">Premiere Pro</span>
+            <span class="glass px-4 py-1.5 rounded-lg">After Effects</span>
+            <span class="glass px-4 py-1.5 rounded-lg">DaVinci Resolve</span>
+                    </div>
+        <div class="mt-8">
+            <a href="#contact" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-3 rounded-xl transition">
+                Let's Work Together
+            </a>
+        </div>
+    </header>
+
+    <!-- Short-Form Section -->
+    <section class="max-w-5xl mx-auto px-6 py-12">
+        <h2 class="text-2xl md:text-3xl font-bold mb-2">⚡ Short-Form Edits (Reels & Shorts)</h2>
+        <p class="text-gray-400 mb-8">Fast-paced hooks, dynamic motion captions & sound design.</p>
+        <div id="short-form-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <p class="text-gray-500">Loading shorts...</p>
+        </div>
+    </section>
+
+    <!-- Long-Form Section -->
+    <section class="max-w-5xl mx-auto px-6 py-12">
+        <h2 class="text-2xl md:text-3xl font-bold mb-2">🎬 YouTube Long-Form</h2>
+        <p class="text-gray-400 mb-8">Narrative pacing, B-roll storytelling & clean audio mastering.</p>
+        <div id="long-form-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <p class="text-gray-500">Loading videos...</p>
+        </div>
+    </section>
+
+    <!-- Contact Footer -->
+    <footer id="contact" class="max-w-5xl mx-auto px-6 py-20 text-center border-t border-white/10 mt-12">
+        <h2 class="text-3xl font-bold">Ready to scale your content?</h2>
+        <p class="text-gray-400 mt-2">Send me your raw footage and let's create magic.</p>
+        <div class="mt-6 flex justify-center gap-4">
+            <a href="mailto:aniketpalav354@gmail.com" class="glass hover:bg-white/10 px-6 py-3 rounded-xl font-medium transition">
+                📩 Contact Aniket
+            </a>
+        </div>
+        <p class="text-xs text-gray-600 mt-12">© 2026 Aniket. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const SUPABASE_URL = 'https://esqasfpnjkcuzfghnzrd.supabase.co/rest/v1/';
+        const SUPABASE_ANON_KEY = 'sb_publishable_I9ygyw3EAqPNBWq__hNNfA_AfFQ8Mib';
+        
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function loadProjects() {
+            const { data, error } = await supabaseClient
+                .from('projects')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Error:', error);
+                return;
+            }
+
+            const shortContainer = document.getElementById('short-form-grid');
+            const longContainer = document.getElementById('long-form-grid');
+            shortContainer.innerHTML = '';
+            longContainer.innerHTML = '';
+
+            data.forEach(item => {
+                if (item.category === 'short_form') {
+                    shortContainer.innerHTML += `
+                        <div class="glass rounded-2xl overflow-hidden p-3">
+                            <div class="aspect-[9/16] w-full rounded-xl overflow-hidden bg-black">
+                                <iframe class="w-full h-full" src="https://www.youtube.com/embed/${item.youtube_id}" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                            <h3 class="font-semibold text-lg mt-3">${item.title}</h3>
+                            <p class="text-sm text-gray-400 mt-1">${item.description || ''}</p>
+                        </div>
+                    `;
+                } else if (item.category === 'long_form') {
+                    longContainer.innerHTML += `
+                        <div class="glass rounded-2xl overflow-hidden p-4">
+                            <div class="aspect-video w-full rounded-xl overflow-hidden bg-black">
+                                <iframe class="w-full h-full" src="https://www.youtube.com/embed/${item.youtube_id}" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                            <h3 class="font-semibold text-xl mt-4">${item.title}</h3>
+                            <p class="text-sm text-gray-400 mt-1">${item.description || ''}</p>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        loadProjects();
+    </script>
+</body>
+</html>
