@@ -419,12 +419,99 @@
 </p>
     </footer>
 
+   <!-- Admin Login & Dashboard Modal (Mobile Friendly) -->
+    <div id="admin-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#141416] border border-purple-500/30 rounded-2xl w-full max-w-md p-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            
+            <!-- Close Button -->
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">✕</button>
+
+            <!-- 1. Login Form -->
+            <div id="admin-login-view">
+                <h3 class="text-2xl font-bold text-white">🔐 Admin Login</h3>
+                <p class="text-xs text-gray-400 mt-1">Login to add or manage portfolio videos.</p>
+                
+                <form onsubmit="handleAdminLogin(event)" class="mt-6 space-y-4">
+                    <div>
+                        <label class="text-xs text-gray-400">Admin Email</label>
+                        <input type="email" id="admin-email" required placeholder="admin@gmail.com"
+                               class="w-full mt-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400">Password</label>
+                        <input type="password" id="admin-password" required placeholder="••••••••"
+                               class="w-full mt-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500 outline-none">
+                    </div>
+                    <p id="login-error" class="text-xs text-rose-400 hidden"></p>
+                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-xl transition">
+                        Login to Dashboard
+                    </button>
+                </form>
+            </div>
+
+            <!-- 2. Admin Dashboard (After Login) -->
+            <div id="admin-dashboard-view" class="hidden">
+                <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                    <h3 class="text-xl font-bold text-white">⚡ Add New Video</h3>
+                    <button onclick="handleAdminLogout()" class="text-xs text-rose-400 hover:underline mr-6">Logout</button>
+                </div>
+
+                <!-- Add Video Form -->
+                <form onsubmit="handleAddVideo(event)" class="mt-4 space-y-3">
+                    <div>
+                        <label class="text-xs text-gray-400">Video Title</label>
+                        <input type="text" id="vid-title" required placeholder="e.g. Viral Podcast Reel"
+                               class="w-full mt-1 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:border-purple-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400">Category</label>
+                        <select id="vid-category" class="w-full mt-1 bg-[#1c1c1f] border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:border-purple-500 outline-none">
+                            <option value="short_form">Short-Form (Reels / Shorts)</option>
+                            <option value="long_form">YouTube Long-Form</option>
+                            <option value="before_after">Before & After Transformation</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400">YouTube Link or Video ID</label>
+                        <input type="text" id="vid-link" required placeholder="Paste full YouTube link or 11-digit ID"
+                               class="w-full mt-1 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:border-purple-500 outline-none">
+                        <p class="text-[11px] text-gray-500 mt-1">तुम्ही थेट पूर्ण YouTube/Shorts लिंक पेस्ट करू शकता!</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400">Short Description</label>
+                        <input type="text" id="vid-desc" placeholder="e.g. Color grading, captions & SFX"
+                               class="w-full mt-1 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:border-purple-500 outline-none">
+                    </div>
+                    <button type="submit" id="add-vid-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-xl transition">
+                        + Publish to Portfolio
+                    </button>
+                </form>
+
+                <!-- Manage / Delete Existing Videos -->
+                <div class="mt-6 pt-4 border-t border-white/10">
+                    <h4 class="text-sm font-bold text-gray-300 mb-3">Manage Existing Videos</h4>
+                    <div id="admin-video-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                        <!-- Videos will load here -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <script>
-        const SUPABASE_URL = 'https://esqasfpnjkcuzfghnzrd.supabase.co/rest/v1/'ा';
+        const SUPABASE_URL = 'https://esqasfpnjkcuzfghnzrd.supabase.co/rest/v1/';
         const SUPABASE_ANON_KEY = 'sb_publishable_I9ygyw3EAqPNBWq__hNNfA_AfFQ8Mib';
-        
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // कोणत्याही पूर्ण YouTube लिंकमधून आपोआप 11 अक्षरांचा ID काढणारे फंक्शन
+        function extractYouTubeID(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+            const match = url.trim().match(regExp);
+            return (match && match[2].length === 11) ? match[2] : url.trim();
+        }
+
+        // पोर्टफोलिओवर व्हिडिओ लोड करणे
         async function loadProjects() {
             const { data, error } = await supabaseClient
                 .from('projects')
@@ -439,15 +526,32 @@
             const beforeAfterContainer = document.getElementById('before-after-grid');
             const shortContainer = document.getElementById('short-form-grid');
             const longContainer = document.getElementById('long-form-grid');
+            const adminList = document.getElementById('admin-video-list');
             
-            beforeAfterContainer.innerHTML = '';
-            shortContainer.innerHTML = '';
-            longContainer.innerHTML = '';
+            if (beforeAfterContainer) beforeAfterContainer.innerHTML = '';
+            if (shortContainer) shortContainer.innerHTML = '';
+            if (longContainer) longContainer.innerHTML = '';
+            if (adminList) adminList.innerHTML = '';
 
             let hasBeforeAfter = false;
 
             data.forEach(item => {
-                if (item.category === 'before_after') {
+                // Admin यादीत डिलीट बटनासह दाखवणे
+                if (adminList) {
+                    adminList.innerHTML += `
+                        <div class="flex items-center justify-between bg-black/40 p-2.5 rounded-lg border border-white/5 text-xs">
+                            <div class="truncate pr-2">
+                                <span class="font-semibold text-white">${item.title}</span>
+                                <span class="text-gray-500 block">${item.category}</span>
+                            </div>
+                            <button onclick="deleteVideo(${item.id})" class="text-rose-400 hover:text-rose-300 bg-rose-500/10 px-2.5 py-1 rounded">
+                                Delete
+                            </button>
+                        </div>
+                    `;
+                }
+
+                if (item.category === 'before_after' && beforeAfterContainer) {
                     hasBeforeAfter = true;
                     beforeAfterContainer.innerHTML += `
                         <div class="glass rounded-2xl overflow-hidden p-4 border border-amber-500/20">
@@ -458,7 +562,7 @@
                             <p class="text-sm text-gray-400 mt-1">${item.description || ''}</p>
                         </div>
                     `;
-                } else if (item.category === 'short_form') {
+                } else if (item.category === 'short_form' && shortContainer) {
                     shortContainer.innerHTML += `
                         <div class="glass rounded-2xl overflow-hidden p-3">
                             <div class="aspect-[9/16] w-full rounded-xl overflow-hidden bg-black">
@@ -468,7 +572,7 @@
                             <p class="text-sm text-gray-400 mt-1">${item.description || ''}</p>
                         </div>
                     `;
-                } else if (item.category === 'long_form') {
+                } else if (item.category === 'long_form' && longContainer) {
                     longContainer.innerHTML += `
                         <div class="glass rounded-2xl overflow-hidden p-4">
                             <div class="aspect-video w-full rounded-xl overflow-hidden bg-black">
@@ -481,14 +585,88 @@
                 }
             });
 
-            // जर अजून Before/After व्हिडिओ टाकला नसेल तर हा सेक्शन आपोआप लपेल
-            if (!hasBeforeAfter) {
-                document.getElementById('before-after-section').style.display = 'none';
+            const baSection = document.getElementById('before-after-section');
+            if (baSection) baSection.style.display = hasBeforeAfter ? 'block' : 'none';
+        }
+
+        // Admin Modal उघडणे व बंद करणे
+        async function openAdminModal() {
+            document.getElementById('admin-modal').classList.remove('hidden');
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                document.getElementById('admin-login-view').classList.add('hidden');
+                document.getElementById('admin-dashboard-view').classList.remove('hidden');
+            } else {
+                document.getElementById('admin-login-view').classList.remove('hidden');
+                document.getElementById('admin-dashboard-view').classList.add('hidden');
             }
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        // Login करणे
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            const errorEl = document.getElementById('login-error');
+            
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) {
+                errorEl.textContent = 'Invalid Email or Password!';
+                errorEl.classList.remove('hidden');
+            } else {
+                errorEl.classList.add('hidden');
+                openAdminModal();
+            }
+        }
+
+        // Logout करणे
+        async function handleAdminLogout() {
+            await supabaseClient.auth.signOut();
+            openAdminModal();
+        }
+
+        // नवीन व्हिडिओ जोडणे
+        async function handleAddVideo(e) {
+            e.preventDefault();
+            const btn = document.getElementById('add-vid-btn');
+            btn.textContent = 'Publishing...';
+
+            const title = document.getElementById('vid-title').value;
+            const category = document.getElementById('vid-category').value;
+            const rawLink = document.getElementById('vid-link').value;
+            const description = document.getElementById('vid-desc').value;
+            const youtube_id = extractYouTubeID(rawLink);
+
+            const { error } = await supabaseClient
+                .from('projects')
+                .insert([{ title, category, youtube_id, description }]);
+
+            btn.textContent = '+ Publish to Portfolio';
+            if (error) {
+                alert('Error adding video: ' + error.message);
+            } else {
+                document.getElementById('vid-title').value = '';
+                document.getElementById('vid-link').value = '';
+                document.getElementById('vid-desc').value = '';
+                loadProjects();
+                alert('Video published successfully!');
+            }
+        }
+
+        // जुना व्हिडिओ डिलीट करणे
+        async function deleteVideo(id) {
+            if (!confirm('हा व्हिडिओ डिलीट करायचा का?')) return;
+            const { error } = await supabaseClient.from('projects').delete().eq('id', id);
+            if (!error) loadProjects();
         }
 
         loadProjects();
     </script>
 </body>
+</html>
 </html>
 
