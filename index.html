@@ -7,19 +7,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { background-color: #0a0a0a; color: #f5f5f5; font-family: 'Inter', sans-serif; }
+        body { background-color: #0a0a0a; color: #f5f5f5; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
         .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-hover:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(168, 85, 247, 0.4); }
     </style>
 </head>
 <body class="antialiased selection:bg-purple-500 selection:text-white">
 
     <!-- Hero Section -->
-    <header class="max-w-5xl mx-auto px-6 pt-16 pb-16 text-center">
+    <header class="max-w-5xl mx-auto px-6 pt-16 pb-12 text-center">
         
-        <!-- अनिकेतचा प्रोफाइल फोटो -->
+        <!-- प्रोफाइल फोटो -->
         <div class="mb-6 flex justify-center">
-            <img src="अनिकेतच्या_फोटोची_लिंक_येथे_टाका" 
-                 alt="Aniket Profile" 
+            <img src="फोटोची_लिंक_येथे_टाका" 
+                 alt="Profile Photo" 
                  class="w-32 h-32 md:w-36 md:h-36 rounded-full object-cover border-4 border-purple-500/40 shadow-xl shadow-purple-500/20">
         </div>
 
@@ -32,18 +33,52 @@
         <p class="mt-4 text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
             Video Editor specializing in <span class="text-white font-semibold">High-Retention Reels/Shorts</span> & <span class="text-white font-semibold">YouTube Storytelling</span>.
         </p>
+
+        <!-- Software Tags -->
         <div class="mt-6 flex flex-wrap justify-center gap-3 text-sm text-gray-300">
             <span class="glass px-4 py-1.5 rounded-lg">Premiere Pro</span>
             <span class="glass px-4 py-1.5 rounded-lg">After Effects</span>
             <span class="glass px-4 py-1.5 rounded-lg">DaVinci Resolve</span>
             <span class="glass px-4 py-1.5 rounded-lg">Sound Design</span>
         </div>
-        <div class="mt-8 flex flex-wrap justify-center gap-4">
+
+        <!-- 2. कामाचे आकडे (Stats Section) -->
+        <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <div class="glass p-5 rounded-2xl">
+                <div class="text-3xl font-extrabold text-purple-400">50+</div>
+                <div class="text-sm text-gray-400 mt-1">Reels & Videos Edited</div>
+            </div>
+            <div class="glass p-5 rounded-2xl">
+                <div class="text-3xl font-extrabold text-purple-400">1M+</div>
+                <div class="text-sm text-gray-400 mt-1">Organic Views Generated</div>
+            </div>
+            <div class="glass p-5 rounded-2xl">
+                <div class="text-3xl font-extrabold text-purple-400">24-48h</div>
+                <div class="text-sm text-gray-400 mt-1">Fast Turnaround Time</div>
+            </div>
+        </div>
+
+        <div class="mt-10 flex flex-wrap justify-center gap-4">
             <a href="#contact" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-3 rounded-xl transition">
                 Let's Work Together
             </a>
+            <a href="#services" class="glass hover:bg-white/10 text-white font-semibold px-8 py-3 rounded-xl transition">
+                View Packages
+            </a>
         </div>
     </header>
+
+    <!-- 1. Before & After Section -->
+    <section id="before-after-section" class="max-w-5xl mx-auto px-6 py-12">
+        <div class="flex items-center gap-2 mb-2">
+            <span class="px-2.5 py-0.5 text-xs font-semibold bg-amber-500/20 text-amber-300 rounded-md border border-amber-500/30">TRANSFORMATION</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-bold mb-2">✨ Raw Footage vs. Final Edit</h2>
+        <p class="text-gray-400 mb-8">See how raw clips turn into high-retention visual stories with color grading, SFX & motion graphics.</p>
+        <div id="before-after-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <p class="text-gray-500">Loading transformations...</p>
+        </div>
+    </section>
 
     <!-- Short-Form Section -->
     <section class="max-w-5xl mx-auto px-6 py-12">
@@ -63,20 +98,88 @@
         </div>
     </section>
 
+    <!-- 3. Services & Packages Section -->
+    <section id="services" class="max-w-5xl mx-auto px-6 py-14">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold">💼 Editing Services & Packages</h2>
+            <p class="text-gray-400 mt-2">Choose a plan that fits your content goals.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Package 1 -->
+            <div class="glass glass-hover rounded-2xl p-6 flex flex-col justify-between transition">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-purple-400">Starter</span>
+                    <h3 class="text-xl font-bold mt-2">Short-Form Edits</h3>
+                    <p class="text-sm text-gray-400 mt-2">Best for Instagram Reels, YouTube Shorts & TikTok.</p>
+                    <ul class="mt-6 space-y-3 text-sm text-gray-300">
+                        <li>✓ Scroll-stopping 3-sec hook</li>
+                        <li>✓ Dynamic animated captions</li>
+                        <li>✓ Trendy B-rolls & zooms</li>
+                        <li>✓ Crisp SFX & background music</li>
+                        <li>✓ 24-48 hours delivery</li>
+                    </ul>
+                </div>
+                <a href="#contact" class="mt-8 block text-center glass hover:bg-purple-600 text-white font-semibold py-2.5 rounded-xl transition">
+                    Book Short-Form
+                </a>
+            </div>
+
+            <!-- Package 2 (Popular) -->
+            <div class="glass rounded-2xl p-6 flex flex-col justify-between border-2 border-purple-500/60 relative shadow-xl shadow-purple-500/10">
+                <span class="absolute -top-3 right-6 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    MOST POPULAR
+                </span>
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-purple-400">Growth</span>
+                    <h3 class="text-xl font-bold mt-2">Monthly Retainer</h3>
+                    <p class="text-sm text-gray-400 mt-2">Consistent daily/weekly content without editing stress.</p>
+                    <ul class="mt-6 space-y-3 text-sm text-gray-300">
+                        <li>✓ 15 to 30 Reels/Shorts per month</li>
+                        <li>✓ Dedicated priority editing</li>
+                        <li>✓ Custom brand style & fonts</li>
+                        <li>✓ Unlimited minor revisions</li>
+                        <li>✓ Content strategy support</li>
+                    </ul>
+                </div>
+                <a href="#contact" class="mt-8 block text-center bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-xl transition">
+                    Start Monthly Plan
+                </a>
+            </div>
+
+            <!-- Package 3 -->
+            <div class="glass glass-hover rounded-2xl p-6 flex flex-col justify-between transition">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-purple-400">Storytelling</span>
+                    <h3 class="text-xl font-bold mt-2">YouTube Long-Form</h3>
+                    <p class="text-sm text-gray-400 mt-2">Talking head, vlogs, podcasts & documentary style.</p>
+                    <ul class="mt-6 space-y-3 text-sm text-gray-300">
+                        <li>✓ High-retention pacing & cuts</li>
+                        <li>✓ Custom motion graphics & text</li>
+                        <li>✓ Color correction & grading</li>
+                        <li>✓ Clean voice & audio mastering</li>
+                        <li>✓ High-CTR Thumbnail guidance</li>
+                    </ul>
+                </div>
+                <a href="#contact" class="mt-8 block text-center glass hover:bg-purple-600 text-white font-semibold py-2.5 rounded-xl transition">
+                    Book Long-Form
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- Contact Footer (WhatsApp & Instagram) -->
     <footer id="contact" class="max-w-5xl mx-auto px-6 py-20 text-center border-t border-white/10 mt-12">
         <h2 class="text-3xl font-bold">Ready to scale your content?</h2>
         <p class="text-gray-400 mt-2">DM me on WhatsApp or Instagram to discuss your next project.</p>
         
         <div class="mt-8 flex flex-wrap justify-center gap-4">
-            <!-- WhatsApp Button (9372688596) -->
-            <a href="https://wa.me/9372688596?text=Hi%20Aniket,%20I%20saw%20your%20video%20editing%20portfolio%20and%20want%20to%20work%20with%20you!" 
+            <a href="https://wa.me/9372688596?text=Hi,%20I%20saw%20your%20video%20editing%20portfolio%20and%20want%20to%20work%20with%20you!" 
                target="_blank" 
                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition flex items-center gap-2">
                 💬 Chat on WhatsApp
             </a>
 
-            <!-- Instagram Button (https://www.instagram.com/itz_aniket_2105) -->
             <a href="https://instagram.com/itz_aniket_2105" 
                target="_blank" 
                class="bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-90 text-white px-6 py-3 rounded-xl font-semibold transition flex items-center gap-2">
@@ -88,7 +191,7 @@
     </footer>
 
     <script>
-        const SUPABASE_URL = 'https://esqasfpnjkcuzfghnzrd.supabase.co/rest/v1/'';
+        const SUPABASE_URL = 'https://esqasfpnjkcuzfghnzrd.supabase.co/rest/v1/'ा';
         const SUPABASE_ANON_KEY = 'sb_publishable_I9ygyw3EAqPNBWq__hNNfA_AfFQ8Mib';
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -104,13 +207,29 @@
                 return;
             }
 
+            const beforeAfterContainer = document.getElementById('before-after-grid');
             const shortContainer = document.getElementById('short-form-grid');
             const longContainer = document.getElementById('long-form-grid');
+            
+            beforeAfterContainer.innerHTML = '';
             shortContainer.innerHTML = '';
             longContainer.innerHTML = '';
 
+            let hasBeforeAfter = false;
+
             data.forEach(item => {
-                if (item.category === 'short_form') {
+                if (item.category === 'before_after') {
+                    hasBeforeAfter = true;
+                    beforeAfterContainer.innerHTML += `
+                        <div class="glass rounded-2xl overflow-hidden p-4 border border-amber-500/20">
+                            <div class="aspect-video w-full rounded-xl overflow-hidden bg-black">
+                                <iframe class="w-full h-full" src="https://www.youtube.com/embed/${item.youtube_id}" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                            <h3 class="font-semibold text-xl mt-4">${item.title}</h3>
+                            <p class="text-sm text-gray-400 mt-1">${item.description || ''}</p>
+                        </div>
+                    `;
+                } else if (item.category === 'short_form') {
                     shortContainer.innerHTML += `
                         <div class="glass rounded-2xl overflow-hidden p-3">
                             <div class="aspect-[9/16] w-full rounded-xl overflow-hidden bg-black">
@@ -132,6 +251,11 @@
                     `;
                 }
             });
+
+            // जर अजून Before/After व्हिडिओ टाकला नसेल तर हा सेक्शन आपोआप लपेल
+            if (!hasBeforeAfter) {
+                document.getElementById('before-after-section').style.display = 'none';
+            }
         }
 
         loadProjects();
