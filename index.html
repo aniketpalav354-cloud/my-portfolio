@@ -495,26 +495,33 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'esqasfpnjkcuzfghnzrd';
+        const SUPABASE_URL = 'esqasfpnjkcuzfghnzrdा';
         const SUPABASE_ANON_KEY = 'sb_publishable_I9ygyw3EAqPNBWq__hNNfA_AfFQ8Mib';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // कोणत्याही पूर्ण YouTube लिंकमधून आपोआप 11 अक्षरांचा ID काढणारे फंक्शन
+        let supabaseClient = null;
+        try {
+            if (window.supabase && SUPABASE_URL.startsWith('http')) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch (err) {
+            console.error('Supabase Init Error:', err);
+        }
+
         function extractYouTubeID(url) {
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
             const match = url.trim().match(regExp);
             return (match && match[2].length === 11) ? match[2] : url.trim();
         }
 
-        // पोर्टफोलिओवर व्हिडिओ लोड करणे
         async function loadProjects() {
+            if (!supabaseClient) return;
             const { data, error } = await supabaseClient
                 .from('projects')
                 .select('*')
                 .order('created_at', { ascending: false });
 
             if (error) {
-                console.error('Error:', error);
+                console.error('Load Error:', error);
                 return;
             }
 
@@ -531,7 +538,6 @@
             let hasBeforeAfter = false;
 
             data.forEach(item => {
-                // Admin यादीत डिलीट बटनासह दाखवणे
                 if (adminList) {
                     adminList.innerHTML += `
                         <div class="flex items-center justify-between bg-black/40 p-2.5 rounded-lg border border-white/5 text-xs">
@@ -539,7 +545,7 @@
                                 <span class="font-semibold text-white">${item.title}</span>
                                 <span class="text-gray-500 block">${item.category}</span>
                             </div>
-                            <button onclick="deleteVideo(${item.id})" class="text-rose-400 hover:text-rose-300 bg-rose-500/10 px-2.5 py-1 rounded">
+                            <button type="button" onclick="deleteVideo(${item.id})" class="text-rose-400 hover:text-rose-300 bg-rose-500/10 px-2.5 py-1 rounded">
                                 Delete
                             </button>
                         </div>
@@ -584,9 +590,9 @@
             if (baSection) baSection.style.display = hasBeforeAfter ? 'block' : 'none';
         }
 
-        // Admin Modal उघडणे व बंद करणे
         async function openAdminModal() {
             document.getElementById('admin-modal').classList.remove('hidden');
+            if (!supabaseClient) return;
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 document.getElementById('admin-login-view').classList.add('hidden');
@@ -601,30 +607,50 @@
             document.getElementById('admin-modal').classList.add('hidden');
         }
 
-        // Login करणे
-        async function handleAdminLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('admin-email').value;
-            const password = document.getElementById('admin-password').value;
+        async function handleAdminLogin() {
+            const btn = document.getElementById('login-submit-btn');
             const errorEl = document.getElementById('login-error');
-            
-            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (error) {
-                errorEl.textContent = error.message;
+            const email = document.getElementById('admin-email').value.trim();
+            const password = document.getElementById('admin-password').value;
+
+            if (!email || !password) {
+                errorEl.textContent = 'कृपया Email आणि Password दोन्ही भरा.';
                 errorEl.classList.remove('hidden');
-            } else {
-                errorEl.classList.add('hidden');
-                openAdminModal();
+                return;
+            }
+
+            if (!supabaseClient) {
+                alert('Supabase URL किंवा Key चुकीची आहे! कृपया index.html मधील SUPABASE_URL तपासा.');
+                return;
+            }
+
+            btn.textContent = 'Checking...';
+            btn.disabled = true;
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                btn.textContent = 'Login to Dashboard';
+                btn.disabled = false;
+
+                if (error) {
+                    errorEl.textContent = error.message;
+                    errorEl.classList.remove('hidden');
+                } else {
+                    errorEl.classList.add('hidden');
+                    openAdminModal();
+                }
+            } catch (err) {
+                btn.textContent = 'Login to Dashboard';
+                btn.disabled = false;
+                alert('Error: ' + err.message);
             }
         }
 
-        // Logout करणे
         async function handleAdminLogout() {
-            await supabaseClient.auth.signOut();
+            if (supabaseClient) await supabaseClient.auth.signOut();
             openAdminModal();
         }
 
-        // नवीन व्हिडिओ जोडणे
         async function handleAddVideo(e) {
             e.preventDefault();
             const btn = document.getElementById('add-vid-btn');
@@ -642,7 +668,7 @@
 
             btn.textContent = '+ Publish to Portfolio';
             if (error) {
-                alert('Error adding video: ' + error.message);
+                alert('Error: ' + error.message);
             } else {
                 document.getElementById('vid-title').value = '';
                 document.getElementById('vid-link').value = '';
@@ -652,16 +678,18 @@
             }
         }
 
-        // जुना व्हिडिओ डिलीट करणे
         async function deleteVideo(id) {
             if (!confirm('हा व्हिडिओ डिलीट करायचा का?')) return;
             const { error } = await supabaseClient.from('projects').delete().eq('id', id);
             if (!error) loadProjects();
         }
 
+        if (window.location.search.includes('admin')) {
+            openAdminModal();
+        }
+
         loadProjects();
     </script>
 </body>
-</html>
 </html>
 
