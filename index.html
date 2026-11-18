@@ -608,7 +608,7 @@
             
             const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
             if (error) {
-                errorEl.textContent = 'Invalid Email or Password!';
+                errorEl.textContent = error.message;
                 errorEl.classList.remove('hidden');
             } else {
                 errorEl.classList.add('hidden');
